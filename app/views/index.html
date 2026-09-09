@@ -4,17 +4,21 @@
 {% set theme = 'light' %}
 {% set themeAccent = 'green' %}
 
+{% from "components/notice-banner/macro.njk" import tnaNoticeBanner %}
 {% from "components/browse-filters/macro.njk" import tnaBrowseFilters %}
 
 {% block content %}
 <div class="tna-container">
-  <div class="tna-section">
-    <h1 class="tna-heading-xl">Browse records of The National Archives</h1>
-    <p class="tna-column--width-5-6">The National Archives is the official archive of the UK government.
-      Select a government department to see the records within this section.
-    </p>
-  </div>
-  <div class="tna-section">
+  <h1 class="tna-heading-xl tna-!--margin-top-l">Browse records of The National Archives</h1>
+  <p class="tna-column--width-5-6">The National Archives is the official archive of the UK government.
+    Select a government department to see the records within this section.
+  </p>
+  {{ tnaNoticeBanner({
+    title: "This site is under development",
+    body: '<p>This is a new way to navigate The National Archives’ records. To explore records from other UK archives you can use our existing tool <a href="#">Browse</a>. Read more about the project on <a href="#">our blog</a>.</p>',
+    classes: "tna-!--margin-top-m"
+  }) }}
+  <div class="tna-!--margin-top-m tna-!--margin-bottom-m">
     <p>Filter by topic</p>
     {% set topicTagItems = [] %}
     {% for tag in data.topicTags %}
