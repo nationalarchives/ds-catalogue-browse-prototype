@@ -4,3 +4,8 @@
   {{ super() }}
   <link href="/public/stylesheets/custom.css" rel="stylesheet" type="text/css" />
 {% endblock stylesheets %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script type="module" src="/public/javascripts/all.js"></script>
+{% endblock bodyEnd %}

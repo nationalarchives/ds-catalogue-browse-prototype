@@ -1,20 +1,32 @@
-{% extends "layouts/main.html" %}
+{% extends "layouts/base.html" %}
 
-{% set pageName="Home" %}
+{% set pageTitle = 'Browse landing page' %}
+{% set theme = 'light' %}
+{% set themeAccent = 'green' %}
+
+{% from "components/browse-filters/macro.njk" import tnaBrowseFilters %}
 
 {% block content %}
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-
-    {% include "govuk-prototype-kit/includes/homepage-top.njk" %}
-
-    <h1 class="govuk-heading-xl">
-      {{ serviceName }}
-    </h1>
-
-    {% include "govuk-prototype-kit/includes/homepage-bottom.njk" %}
+<div class="tna-container">
+  <div class="tna-section">
+    <h1 class="tna-heading-xl">Browse records of The National Archives</h1>
+    <p class="tna-column--width-5-6">The National Archives is the official archive of the UK government.
+      Select a government department to see the records within this section.
+    </p>
+  </div>
+  <div class="tna-section">
+    <p>Filter by topic</p>
+    {% set topicTagItems = [] %}
+    {% for tag in data.topicTags %}
+      {% set topicTagItems = (topicTagItems.push({
+        label: tag.name + " (" + tag.count + ")",
+        href: "#?filter=" + tag.slug,
+        selected: tag.selected
+      }), topicTagItems) %}
+    {% endfor %}
+    {{ tnaBrowseFilters({
+      items: topicTagItems
+    }) }}
   </div>
 </div>
-
-{% endblock %}
+{% endblock content %}

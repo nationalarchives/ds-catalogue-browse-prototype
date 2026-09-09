@@ -1,0 +1,101 @@
+@use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+$browse-filters-border-radius: 20px;
+
+.tna-browse-filters {
+  margin-top: 2rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+
+  list-style: none;
+
+  &:focus:not(:focus-visible) {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  &:empty {
+    display: none;
+  }
+
+  $browse-filters-inline-padding: 0.75rem;
+
+  &__item {
+    position: relative;
+    line-height: 1.75;
+    border-radius: $browse-filters-border-radius;
+    font-size: 1rem;
+    background-color: colour.brand-colour("light-grey");
+
+    &--selected {
+      background-color: colour.brand-colour("forest");
+      color: colour.brand-colour("white");
+    }
+  }
+
+  &__toggle {
+    padding: 0 $browse-filters-inline-padding;
+
+    display: block;
+    width: 100%;
+
+    font: inherit;
+    line-height: inherit;
+    color: inherit;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-radius: $browse-filters-border-radius;
+    cursor: pointer;
+
+    .tna-browse-filters__item--selected & {
+      padding-right: 2.25rem;
+    }
+  }
+
+  &__remove {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2.25rem;
+    background: transparent;
+    border: none;
+    border-radius: $browse-filters-border-radius;
+    cursor: pointer;
+    font-size: 0;
+    line-height: 0;
+
+    .tna-browse-filters__item--selected & {
+      display: block;
+    }
+
+    &::before,
+    &::after {
+      content: "";
+      height: 1rem;
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -0.5rem;
+      margin-left: -1px;
+      border-left: 2px colour.brand-colour("white") solid;
+    }
+
+    &::before {
+      transform: rotate(45deg);
+    }
+
+    &::after {
+      transform: rotate(-45deg);
+    }
+  }
+}
