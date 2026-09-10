@@ -1,0 +1,32 @@
+.tna-department-list {
+  width: 100%;
+
+  &__count {
+    margin-top: 0;
+  }
+
+  &__code {
+    margin-left: auto;
+  }
+
+  &__item--hidden {
+    display: none;
+  }
+
+  .tna-table {
+    width: 100%;
+  }
+
+  .tna-table__header {
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  .tna-table__cell {
+    padding-bottom: 8px;
+  }
+
+  .tna-table__head .tna-table__header {
+    border-bottom: 1px solid var(--keyline);
+  }
+}

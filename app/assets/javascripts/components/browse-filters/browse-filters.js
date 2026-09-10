@@ -14,32 +14,87 @@ export class BrowseFilters {
 
   init() {
     this.$module.addEventListener("click", (event) => this.handleClick(event));
+    window.addEventListener("popstate", () => this.syncFromUrl());
   }
 
   handleClick(event) {
-    const $toggle = event.target.closest(".tna-browse-filters__toggle");
-    const $remove = event.target.closest(".tna-browse-filters__remove");
-    if (!$toggle && !$remove) {
+    const $link = event.target.closest(".tna-browse-filters__link");
+    if (!$link || !this.$module.contains($link)) {
       return;
     }
 
-    const $item = event.target.closest(".tna-browse-filters__item");
+    const $item = $link.closest(".tna-browse-filters__item");
     if (!$item) {
       return;
     }
 
-    if ($remove) {
-      $item.classList.remove(this.selectedClass);
-    } else {
-      $item.classList.toggle(this.selectedClass);
+    event.preventDefault();
+    $item.classList.toggle(this.selectedClass);
+    this.applyState(true);
+  }
+
+  syncFromUrl() {
+    const selected = this.getSelectedFromUrl();
+    this.$items.forEach(($item) => {
+      const slug = $item.getAttribute("data-filter");
+      $item.classList.toggle(this.selectedClass, selected.indexOf(slug) !== -1);
+    });
+    this.applyState(false);
+  }
+
+  applyState(pushState) {
+    const selected = this.getSelected();
+
+    this.$items.forEach(($item) => {
+      const isSelected = $item.classList.contains(this.selectedClass);
+      const $state = $item.querySelector(".tna-browse-filters__state");
+      if ($state) {
+        $state.textContent = isSelected ? ", remove filter" : "";
+      }
+      const $link = $item.querySelector(".tna-browse-filters__link");
+      const slug = $item.getAttribute("data-filter");
+      if ($link && slug) {
+        $link.setAttribute("href", this.buildUrl(this.toggle(selected, slug)));
+      }
+    });
+
+    if (pushState) {
+      window.history.pushState({}, "", this.buildUrl(selected));
     }
 
-    const $toggleButton = $item.querySelector(".tna-browse-filters__toggle");
-    if ($toggleButton) {
-      $toggleButton.setAttribute(
-        "aria-pressed",
-        $item.classList.contains(this.selectedClass) ? "true" : "false",
-      );
+    this.$module.dispatchEvent(
+      new CustomEvent("browse-filters:change", {
+        detail: { selected: selected },
+        bubbles: true,
+      }),
+    );
+  }
+
+  getSelected() {
+    return [...this.$items]
+      .filter(($item) => $item.classList.contains(this.selectedClass))
+      .map(($item) => $item.getAttribute("data-filter"))
+      .filter(Boolean);
+  }
+
+  getSelectedFromUrl() {
+    return new URLSearchParams(window.location.search)
+      .getAll("filter")
+      .filter(Boolean);
+  }
+
+  toggle(selected, slug) {
+    return selected.indexOf(slug) !== -1
+      ? selected.filter((s) => s !== slug)
+      : selected.concat(slug);
+  }
+
+  buildUrl(selected) {
+    if (selected.length === 0) {
+      return window.location.pathname;
     }
+    const params = new URLSearchParams();
+    selected.forEach((s) => params.append("filter", s));
+    return window.location.pathname + "?" + params.toString();
   }
 }

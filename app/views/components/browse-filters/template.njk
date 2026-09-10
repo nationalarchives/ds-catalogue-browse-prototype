@@ -2,9 +2,9 @@
 {%- set classes = containerClasses | join(' ') -%}
 <ul class="tna-browse-filters{% if classes %} {{ classes }}{% endif %}" data-module="tna-browse-filters"{% for attribute, value in params.attributes %} {{ attribute }}{% if value !== '' %}="{{ value }}"{% endif %}{% endfor %}>
   {%- for item in params.items %}
-  <li class="tna-browse-filters__item{% if item.selected %} tna-browse-filters__item--selected{% endif %}">
-    <button type="button" class="tna-browse-filters__toggle" aria-pressed="{{ 'true' if item.selected else 'false' }}">{{ item.label }}</button>
-    <button type="button" class="tna-browse-filters__remove" aria-label="Remove {{ item.label }} filter"></button>
+  <li class="tna-browse-filters__item{% if item.selected %} tna-browse-filters__item--selected{% endif %}"{% if item.filter %} data-filter="{{ item.filter }}"{% endif %}>
+    <a href="{{ item.href }}" class="tna-browse-filters__link">{{ item.label }}<span class="tna-visually-hidden tna-browse-filters__state">{% if item.selected %}, remove filter{% endif %}</span></a>
+    <span class="tna-browse-filters__remove" aria-hidden="true"></span>
   </li>
   {%- endfor %}
 </ul>

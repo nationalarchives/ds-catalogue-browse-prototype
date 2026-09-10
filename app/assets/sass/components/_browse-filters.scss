@@ -38,20 +38,19 @@ $browse-filters-border-radius: 20px;
     }
   }
 
-  &__toggle {
-    padding: 6px $browse-filters-inline-padding;
+  &__item &__link {
+    color: inherit;
+  }
 
+  &__link {
+    padding: 6px $browse-filters-inline-padding;
     display: block;
     width: 100%;
-
     font: inherit;
     line-height: 1;
-    color: inherit;
     text-align: left;
-    background: transparent;
-    border: none;
+    text-decoration: none;
     border-radius: $browse-filters-border-radius;
-    cursor: pointer;
 
     .tna-browse-filters__item--selected & {
       padding-right: 2rem;
@@ -65,12 +64,7 @@ $browse-filters-border-radius: 20px;
     right: 0;
     bottom: 0;
     width: 2rem;
-    background: transparent;
-    border: none;
-    border-radius: $browse-filters-border-radius;
-    cursor: pointer;
-    font-size: 0;
-    line-height: 0;
+    pointer-events: none;
 
     .tna-browse-filters__item--selected & {
       display: block;

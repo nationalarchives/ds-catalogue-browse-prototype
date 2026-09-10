@@ -1,0 +1,29 @@
+{%- set containerClasses = [params.classes] if params.classes else [] -%}
+{%- set classes = containerClasses | join(' ') -%}
+<div class="tna-department-list{% if classes %} {{ classes }}{% endif %}" data-module="tna-department-list"{% for attribute, value in params.attributes %} {{ attribute }}{% if value !== '' %}="{{ value }}"{% endif %}{% endfor %}>
+  <div class="tna-department-list__status" role="status">
+    <h2 class="tna-heading-s tna-department-list__count">{{ params.count }} {{ 'department' if params.count == 1 else 'departments' }}</h2>
+    <p class="tna-department-list__no-results"{% if params.count != 0 %} hidden{% endif %}>No departments match the selected filters.</p>
+  </div>
+  <table class="tna-table">
+    <caption class="tna-visually-hidden">Departments and their codes</caption>
+    <thead class="tna-table__head">
+      <tr class="tna-table__row">
+        <th class="tna-table__header" scope="col">Department name</th>
+        <th class="tna-table__header tna-table__header--align-right" scope="col">Department code</th>
+      </tr>
+    </thead>
+    <tbody class="tna-table__body">
+      {%- for item in params.items %}
+      <tr class="tna-table__row tna-department-list__item{% if item.hidden %} tna-department-list__item--hidden{% endif %}" data-taxonomy="{{ item.taxonomy }}">
+        <td class="tna-table__cell">
+          <a href="{{ item.href }}">{{ item.name }}</a>
+        </td>
+        <td class="tna-table__cell tna-table__cell--align-right tna-table__cell--align-bottom">
+          <span class="tna-chip tna-chip--green tna-department-list__code">{{ item.code }}</span>
+        </td>
+      </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+</div>
