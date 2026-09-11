@@ -1,9 +1,9 @@
 {%- set containerClasses = [params.classes] if params.classes else [] -%}
 {%- set classes = containerClasses | join(' ') -%}
-<div class="tna-department-list{% if classes %} {{ classes }}{% endif %}" data-module="tna-department-list"{% for attribute, value in params.attributes %} {{ attribute }}{% if value !== '' %}="{{ value }}"{% endif %}{% endfor %}>
-  <div class="tna-department-list__status" role="status">
-    <h2 class="tna-heading-s tna-department-list__count">{{ params.count }} {{ 'department' if params.count == 1 else 'departments' }}</h2>
-    <p class="tna-department-list__no-results"{% if params.count != 0 %} hidden{% endif %}>No departments match the selected filters.</p>
+<div class="department-list{% if classes %} {{ classes }}{% endif %}" data-module="department-list"{% for attribute, value in params.attributes %} {{ attribute }}{% if value !== '' %}="{{ value }}"{% endif %}{% endfor %}>
+  <div class="department-list__status" role="status">
+    <h2 class="tna-heading-s department-list__count">{{ params.count }} {{ 'department' if params.count == 1 else 'departments' }}</h2>
+    <p class="department-list__no-results"{% if params.count != 0 %} hidden{% endif %}>No departments match the selected filters.</p>
   </div>
   <table class="tna-table">
     <caption class="tna-visually-hidden">Departments and their codes</caption>
@@ -15,12 +15,12 @@
     </thead>
     <tbody class="tna-table__body">
       {%- for item in params.items %}
-      <tr class="tna-table__row tna-department-list__item{% if item.hidden %} tna-department-list__item--hidden{% endif %}" data-taxonomy="{{ item.taxonomy }}">
+      <tr class="tna-table__row department-list__item{% if item.hidden %} department-list__item--hidden{% endif %}" data-subjects="{{ item.subjects | join('|') }}">
         <td class="tna-table__cell">
           <a href="{{ item.href }}">{{ item.name }}</a>
         </td>
         <td class="tna-table__cell tna-table__cell--align-right tna-table__cell--align-bottom">
-          <span class="tna-chip tna-chip--green tna-department-list__code">{{ item.code }}</span>
+          <span class="tna-chip tna-chip--green department-list__code">{{ item.code }}</span>
         </td>
       </tr>
       {%- endfor %}

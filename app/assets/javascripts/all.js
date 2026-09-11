@@ -6,11 +6,11 @@ const initAll = (options = {}) => {
     options.scope instanceof HTMLElement ? options.scope : document;
 
   $scope
-    .querySelectorAll('[data-module="tna-browse-filters"]')
+    .querySelectorAll('[data-module="browse-filters"]')
     .forEach(($module) => new BrowseFilters($module));
 
   $scope
-    .querySelectorAll('[data-module="tna-department-list"]')
+    .querySelectorAll('[data-module="department-list"]')
     .forEach(($module) => new DepartmentList($module));
 };
 

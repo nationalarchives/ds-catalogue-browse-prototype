@@ -1,7 +1,7 @@
 @use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
 $browse-filters-border-radius: 20px;
 
-.tna-browse-filters {
+.browse-filters {
   margin-top: 16px;
 
   &:first-child {
@@ -46,13 +46,23 @@ $browse-filters-border-radius: 20px;
     padding: 6px $browse-filters-inline-padding;
     display: block;
     width: 100%;
+    box-sizing: border-box;
     font: inherit;
     line-height: 1;
     text-align: left;
     text-decoration: none;
     border-radius: $browse-filters-border-radius;
 
-    .tna-browse-filters__item--selected & {
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:focus:not(:focus-visible) {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .browse-filters__item--selected & {
       padding-right: 2rem;
     }
   }
@@ -66,7 +76,7 @@ $browse-filters-border-radius: 20px;
     width: 2rem;
     pointer-events: none;
 
-    .tna-browse-filters__item--selected & {
+    .browse-filters__item--selected & {
       display: block;
     }
 

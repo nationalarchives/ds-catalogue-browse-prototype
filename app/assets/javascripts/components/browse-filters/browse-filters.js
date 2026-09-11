@@ -2,13 +2,13 @@ export class BrowseFilters {
   constructor($module) {
     this.$module = $module;
     this.$items =
-      $module && $module.querySelectorAll(".tna-browse-filters__item");
+      $module && $module.querySelectorAll(".browse-filters__item");
 
     if (!this.$module || !this.$items || !this.$items.length) {
       return;
     }
 
-    this.selectedClass = "tna-browse-filters__item--selected";
+    this.selectedClass = "browse-filters__item--selected";
     this.init();
   }
 
@@ -18,12 +18,12 @@ export class BrowseFilters {
   }
 
   handleClick(event) {
-    const $link = event.target.closest(".tna-browse-filters__link");
+    const $link = event.target.closest(".browse-filters__link");
     if (!$link || !this.$module.contains($link)) {
       return;
     }
 
-    const $item = $link.closest(".tna-browse-filters__item");
+    const $item = $link.closest(".browse-filters__item");
     if (!$item) {
       return;
     }
@@ -47,11 +47,11 @@ export class BrowseFilters {
 
     this.$items.forEach(($item) => {
       const isSelected = $item.classList.contains(this.selectedClass);
-      const $state = $item.querySelector(".tna-browse-filters__state");
+      const $state = $item.querySelector(".browse-filters__state");
       if ($state) {
         $state.textContent = isSelected ? ", remove filter" : "";
       }
-      const $link = $item.querySelector(".tna-browse-filters__link");
+      const $link = $item.querySelector(".browse-filters__link");
       const slug = $item.getAttribute("data-filter");
       if ($link && slug) {
         $link.setAttribute("href", this.buildUrl(this.toggle(selected, slug)));

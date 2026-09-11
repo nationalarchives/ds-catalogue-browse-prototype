@@ -6,9 +6,24 @@
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
-router.get('/', function (req, res) {
-  const topicTags = req.session.data.topicTags || []
-  const departments = req.session.data.departments || []
+const { fetchBrowseData } = require('./lib/rosetta')
+
+router.get('/', async function (req, res) {
+  let subjects = []
+  let departments = []
+
+  try {
+    const data = await fetchBrowseData()
+    subjects = data.subjects
+    departments = data.departments
+  } catch (error) {
+    console.error('Failed to load browse data from the search API:', error.message)
+  }
+
+  subjects.sort(function (a, b) { return a.name.localeCompare(b.name) })
+  departments.sort(function (a, b) {
+    return (a.code || '').localeCompare(b.code || '')
+  })
 
   let selected = req.query.filter || []
   if (!Array.isArray(selected)) {
@@ -16,10 +31,10 @@ router.get('/', function (req, res) {
   }
   selected = selected.filter(Boolean)
 
-  const buildHref = function (slug) {
-    const next = selected.indexOf(slug) !== -1
-      ? selected.filter(function (s) { return s !== slug })
-      : selected.concat(slug)
+  const buildHref = function (name) {
+    const next = selected.indexOf(name) !== -1
+      ? selected.filter(function (s) { return s !== name })
+      : selected.concat(name)
     if (next.length === 0) {
       return req.path
     }
@@ -28,19 +43,26 @@ router.get('/', function (req, res) {
     }).join('&')
   }
 
-  const filters = topicTags.map(function (tag) {
+  const filters = subjects.map(function (subject) {
     return {
-      label: tag.name + ' (' + tag.count + ')',
-      href: buildHref(tag.slug),
-      filter: tag.slug,
-      selected: selected.indexOf(tag.slug) !== -1
+      label: subject.name + ' (' + subject.count + ')',
+      href: buildHref(subject.name),
+      filter: subject.name,
+      selected: selected.indexOf(subject.name) !== -1
     }
   })
 
   const departmentItems = departments.map(function (department) {
-    return Object.assign({}, department, {
-      hidden: selected.length > 0 && selected.indexOf(department.taxonomy) === -1
+    const matches = department.subjects.some(function (subject) {
+      return selected.indexOf(subject) !== -1
     })
+    return {
+      name: department.name,
+      code: department.code,
+      href: '#',
+      subjects: department.subjects,
+      hidden: selected.length > 0 && !matches
+    }
   })
 
   const resultCount = departmentItems.filter(function (department) {

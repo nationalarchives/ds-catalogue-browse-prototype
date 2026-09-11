@@ -1,0 +1,9 @@
+{%- set containerClasses = [params.classes] if params.classes else [] -%}
+{%- set classes = containerClasses | join(' ') -%}
+{%- set bannerId = params.id if params.id else "development-notice" -%}
+<section class="development-notice{% if classes %} {{ classes }}{% endif %}" aria-labelledby="{{ bannerId }}__heading"{% for attribute, value in params.attributes %} {{ attribute }}{% if value !== '' %}="{{ value }}"{% endif %}{% endfor %}>
+  <h{{ params.headingLevel or '2' }} class="tna-heading-s development-notice__heading" id="{{ bannerId }}__heading">{{ params.title }}</h{{ params.headingLevel or '2' }}>
+  <div class="development-notice__content">
+    {{ params.body | safe }}
+  </div>
+</section>

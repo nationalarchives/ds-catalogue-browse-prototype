@@ -4,9 +4,9 @@
 {% set theme = 'light' %}
 {% set themeAccent = 'green' %}
 
-{% from "components/notice-banner/macro.njk" import tnaNoticeBanner %}
-{% from "components/browse-filters/macro.njk" import tnaBrowseFilters %}
-{% from "components/department-list/macro.njk" import tnaDepartmentList %}
+{% from "components/development-notice/macro.njk" import developmentNotice %}
+{% from "components/browse-filters/macro.njk" import browseFilters %}
+{% from "components/department-list/macro.njk" import departmentList %}
 
 {% block content %}
 <div class="tna-container">
@@ -14,21 +14,21 @@
   <p class="tna-column--width-5-6">The National Archives is the official archive of the UK government.
     Select a government department to see the records within this section.
   </p>
-  {{ tnaNoticeBanner({
+  {{ developmentNotice({
     title: "This site is under development",
     body: '<p>This is a new way to navigate The National Archives’ records. To explore records from other UK archives you can use our existing tool <a href="#">Browse</a>. Read more about the project on <a href="#">our blog</a>.</p>',
     classes: "tna-!--margin-top-m"
   }) }}
   <div class="tna-!--margin-top-m tna-!--margin-bottom-m">
     <p id="browse-filters-heading">Filter by topic</p>
-    {{ tnaBrowseFilters({
+    {{ browseFilters({
       items: filters,
       attributes: {
         "aria-labelledby": "browse-filters-heading"
       }
     }) }}
   </div>
-  {{ tnaDepartmentList({
+  {{ departmentList({
     items: departmentItems,
     count: resultCount,
     classes: "tna-!--margin-bottom-m"

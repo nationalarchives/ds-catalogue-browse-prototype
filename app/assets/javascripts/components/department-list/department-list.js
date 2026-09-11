@@ -2,16 +2,16 @@ export class DepartmentList {
   constructor($module) {
     this.$module = $module;
     this.$rows =
-      $module && $module.querySelectorAll(".tna-department-list__item");
-    this.$count = $module && $module.querySelector(".tna-department-list__count");
+      $module && $module.querySelectorAll(".department-list__item");
+    this.$count = $module && $module.querySelector(".department-list__count");
     this.$noResults =
-      $module && $module.querySelector(".tna-department-list__no-results");
+      $module && $module.querySelector(".department-list__no-results");
 
     if (!this.$module || !this.$rows || !this.$rows.length) {
       return;
     }
 
-    this.hiddenClass = "tna-department-list__item--hidden";
+    this.hiddenClass = "department-list__item--hidden";
     this.init();
   }
 
@@ -26,9 +26,10 @@ export class DepartmentList {
     let visible = 0;
 
     this.$rows.forEach(($row) => {
+      const subjects = ($row.getAttribute("data-subjects") || "").split("|");
       const match =
         filters.length === 0 ||
-        filters.indexOf($row.getAttribute("data-taxonomy")) !== -1;
+        filters.some((filter) => subjects.indexOf(filter) !== -1);
       $row.classList.toggle(this.hiddenClass, !match);
       if (match) {
         visible += 1;
