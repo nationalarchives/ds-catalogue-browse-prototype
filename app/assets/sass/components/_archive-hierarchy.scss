@@ -1,6 +1,24 @@
 @use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/media";
+
+.catalogue-columns {
+  margin-bottom: 50px;
+}
+
+.catalogue-main {
+  @include media.on-larger-than-mobile {
+    padding-right: 2rem;
+  }
+}
 
 .catalogue-aside {
+  align-self: flex-start;
+
+  @include media.on-larger-than-mobile {
+    position: sticky;
+    top: 20px;
+  }
+
   &.tna-column {
     padding: 1.5rem;
   }
@@ -24,8 +42,12 @@
   &__icon {
     flex-shrink: 0;
 
-    width: auto;
-    height: 23px;
+    font-size: 1.375rem;
+
+    &:is(img) {
+      width: auto;
+      height: 23px;
+    }
   }
 }
 

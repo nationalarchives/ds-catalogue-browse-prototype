@@ -1,3 +1,7 @@
+@use "node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+@use "node_modules/@fortawesome/fontawesome-free/scss/regular";
+@use "node_modules/@fortawesome/fontawesome-free/scss/solid";
+
 @use "components/browse-filters";
 @use "components/development-notice";
 @use "components/department-list";
