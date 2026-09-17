@@ -10,28 +10,40 @@
 
 {% block content %}
 <div class="tna-container">
-  <h1 class="tna-heading-xl tna-!--margin-top-l">Browse records of The National Archives</h1>
-  <p class="tna-column--width-5-6">The National Archives is the official archive of the UK government.
-    Select a government department to see the records within this section.
-  </p>
-  {{ developmentNotice({
-    title: "This site is under development",
-    body: '<p>This is a new way to navigate The National Archives’ records. To explore records from other UK archives you can use our existing tool <a href="#">Browse</a>. Read more about the project on <a href="#">our blog</a>.</p>',
-    classes: "tna-!--margin-top-m"
-  }) }}
-  <div class="tna-!--margin-top-m tna-!--margin-bottom-m">
-    <p id="browse-filters-heading">Filter by topic</p>
-    {{ browseFilters({
-      items: filters,
-      attributes: {
-        "aria-labelledby": "browse-filters-heading"
-      }
+  <div class="tna-column tna-column--full">
+    <h1 class="tna-heading-xl tna-!--margin-top-l">Browse records of The National Archives</h1>
+    <p class="tna-column--width-5-6">The National Archives is the official archive of the UK government.
+      Select a government department to see the records within this section.
+    </p>
+  </div>
+</div>
+
+<div class="tna-section">
+  <div class="tna-container">
+    <div class="tna-column tna-column--full">
+      {{ developmentNotice() }}
+    </div>
+  </div>
+</div>
+
+<div class="tna-container">
+  <div class="tna-column tna-column--full">
+    {# filters disabled for now until data is completely available
+    <div class="tna-!--margin-top-m tna-!--margin-bottom-m">
+      <p id="browse-filters-heading">Filter by topic</p>
+      {{ browseFilters({
+        items: filters,
+        attributes: {
+          "aria-labelledby": "browse-filters-heading"
+        }
+      }) }}
+    </div>
+      #}
+    {{ departmentList({
+      items: departmentItems,
+      count: resultCount,
+      classes: "tna-!--margin-bottom-m"
     }) }}
   </div>
-  {{ departmentList({
-    items: departmentItems,
-    count: resultCount,
-    classes: "tna-!--margin-bottom-m"
-  }) }}
 </div>
 {% endblock content %}

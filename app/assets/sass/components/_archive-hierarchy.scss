@@ -19,14 +19,13 @@
     top: 20px;
   }
 
-  &.tna-column {
+  &__content {
     padding: 1.5rem;
+    background-color: colour.brand-colour("pastel-green");
+
+    border: 1px solid colour.brand-colour("light-grey");
+    border-radius: 5px;
   }
-
-  background-color: colour.brand-colour("pastel-green");
-
-  border: 1px solid colour.brand-colour("light-grey");
-  border-radius: 5px;
 
   .tna-heading-s {
     margin-top: 20px;
