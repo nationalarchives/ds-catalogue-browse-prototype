@@ -6,11 +6,7 @@
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
-const {
-  fetchBrowseData,
-  fetchLevelCount,
-  fetchDivisions
-} = require('./lib/rosetta')
+const { fetchBrowseData, fetchBrowsePage, departmentHref } = require('./lib/rosetta')
 
 router.get('/', async function (req, res) {
   let subjects = []
@@ -63,7 +59,7 @@ router.get('/', async function (req, res) {
     return {
       name: department.name,
       code: department.code,
-      href: '/department/' + encodeURIComponent(department.code),
+      href: departmentHref(department),
       subjects: department.subjects,
       hidden: selected.length > 0 && !matches
     }
@@ -84,34 +80,38 @@ router.get('/department', function (req, res) {
   res.redirect('/')
 })
 
-router.get('/department/:code', async function (req, res) {
-  const code = req.params.code
-  let departmentCount = 0
-  let department = null
-  let seriesCount = 0
-  let divisions = []
+router.get(/^\/department\/(.+)$/, async function (req, res) {
+  const ids = req.params[0].split('/').filter(function (segment) {
+    return segment && segment !== 'details'
+  })
+  let page = null
 
   try {
-    const results = await Promise.all([
-      fetchBrowseData(),
-      fetchLevelCount(code, 'Series'),
-      fetchDivisions(code)
-    ])
-    const departments = results[0].departments
-    departmentCount = departments.length
-    department = departments.find(function (d) { return d.code === code }) || null
-    seriesCount = results[1]
-    divisions = results[2]
+    page = await fetchBrowsePage(ids)
   } catch (error) {
-    console.error('Failed to load department data from the search API:', error.message)
+    console.error('Failed to load browse path ' + ids.join('/') + ' from the search API:', error.message)
   }
 
-  divisions.sort(function (a, b) { return a.name.localeCompare(b.name) })
+  if (!page) {
+    res.status(404)
+    return res.render('department', {
+      pageTitle: 'Record not found',
+      tree: [{
+        name: 'The National Archives',
+        href: '/',
+        countLabel: '',
+        children: [{
+          name: 'Record not found',
+          href: '/department/' + ids.map(encodeURIComponent).join('/'),
+          detailsHref: '',
+          countLabel: '',
+          type: 'Department',
+          selected: true,
+          children: []
+        }]
+      }]
+    })
+  }
 
-  res.render('department', {
-    departmentCount: departmentCount,
-    department: department,
-    seriesCount: seriesCount,
-    divisions: divisions
-  })
+  res.render('department', page)
 })
