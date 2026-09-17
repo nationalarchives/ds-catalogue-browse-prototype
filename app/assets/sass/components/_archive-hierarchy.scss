@@ -1,5 +1,7 @@
 @use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/variables/typography" as typographyVars;
 @use "node_modules/@nationalarchives/frontend/nationalarchives/tools/media";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/typography";
 
 .catalogue-columns {
   margin-bottom: 50px;
@@ -51,9 +53,9 @@
 }
 
 .archive-hierarchy {
+  @include typography.font-size(typographyVars.$body-font-size-px * 0.85);
   margin: 0;
   padding: 0;
-
   list-style: none;
 
   ul {
