@@ -1,0 +1,46 @@
+@use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+
+.catalogue-aside {
+  &.tna-column {
+    padding: 1.5rem;
+  }
+
+  background-color: colour.brand-colour("pastel-green");
+
+  border: 1px solid colour.brand-colour("light-grey");
+  border-radius: 5px;
+
+  .tna-heading-s {
+    margin-top: 20px;
+    padding-top: 0;
+  }
+
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+
+    width: auto;
+    height: 23px;
+  }
+}
+
+.archive-hierarchy {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  ul {
+    margin: 1rem 0 0;
+    padding-left: 1.25rem;
+
+    list-style: none;
+
+    border-left: 2px dashed #999;
+  }
+}
