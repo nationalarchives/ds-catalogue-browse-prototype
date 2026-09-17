@@ -30,16 +30,45 @@ function parseDepartments (data) {
   })
 }
 
-async function fetchBrowseData () {
-  const response = await fetch(SEARCH_API_URL + '?' + DEPARTMENTS_QUERY)
+async function search (query) {
+  const response = await fetch(SEARCH_API_URL + '?' + query)
   if (!response.ok) {
     throw new Error('Search API responded with ' + response.status)
   }
-  const json = await response.json()
+  return response.json()
+}
+
+async function fetchBrowseData () {
+  const json = await search(DEPARTMENTS_QUERY)
   return {
     subjects: parseSubjects(json.aggregations),
     departments: parseDepartments(json.data)
   }
 }
 
-module.exports = { fetchBrowseData }
+async function fetchLevelCount (code, level) {
+  const json = await search(
+    'size=0&filter=level:' + level + ';longCollection:' + encodeURIComponent(code)
+  )
+  return (json.stats && json.stats.total) || 0
+}
+
+async function fetchDivisions (code) {
+  const json = await search(
+    'size=100&filter=level:Division;longCollection:' + encodeURIComponent(code)
+  )
+  return (json.data || []).map(function (record) {
+    const details = record['@template'].details
+    return {
+      name: details.cleanSummaryTitle || details.summaryTitle || '',
+      dates: details.dateCovering || '',
+      iaid: details.iaid || ''
+    }
+  })
+}
+
+module.exports = {
+  fetchBrowseData,
+  fetchLevelCount,
+  fetchDivisions
+}

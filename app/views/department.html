@@ -1,0 +1,61 @@
+{% extends "layouts/base.html" %}
+
+{% set pageTitle = 'Browse department records' %}
+{% set theme = 'light' %}
+{% set themeAccent = 'green' %}
+
+{% block content %}
+<div class="tna-container">
+  <h1 class="tna-heading-xl tna-!--margin-top-l">Browse department records</h1>
+  <p class="tna-column--width-5-6">Records of The National Archives, organised by government department.</p>
+
+  <nav class="browse-hierarchy tna-!--margin-top-m" aria-label="Catalogue hierarchy">
+    <ol class="browse-hierarchy__list">
+      <li class="browse-hierarchy__item">
+        <span class="browse-hierarchy__marker" aria-hidden="true"></span>
+        <div class="browse-hierarchy__body">
+          <a href="/" class="browse-hierarchy__link">The National Archives</a>
+          <p class="browse-hierarchy__count">{{ departmentCount }} departments</p>
+        </div>
+      </li>
+      {% if department %}
+      <li class="browse-hierarchy__item browse-hierarchy__item--current" aria-current="true">
+        <div class="browse-hierarchy__body">
+          <span class="browse-hierarchy__marker browse-hierarchy__marker--current" aria-hidden="true"></span>
+          <div class="browse-hierarchy__content">
+          <div class="browse-hierarchy__header">
+            <h2 class="tna-heading-s browse-hierarchy__title">{{ department.name }}</h2>
+            <p class="browse-hierarchy__level">
+              <span class="browse-hierarchy__level-label">Department</span>
+              <span class="tna-chip tna-chip--green browse-hierarchy__code">{{ department.code }}</span>
+            </p>
+          </div>
+          <p class="browse-hierarchy__count">{{ seriesCount }} series</p>
+          <a href="#" class="browse-hierarchy__details">View details</a>
+          </div>
+        </div>
+      </li>
+      {% endif %}
+    </ol>
+
+    {% if divisions.length %}
+    <ul class="browse-hierarchy__children">
+      {% for division in divisions %}
+      <li class="browse-hierarchy__child">
+        <span class="browse-hierarchy__marker" aria-hidden="true"></span>
+        <div class="browse-hierarchy__body">
+          <div class="browse-hierarchy__header">
+            <a href="#" class="browse-hierarchy__child-link">{{ division.name }}</a>
+            <span class="browse-hierarchy__level-label">Division</span>
+          </div>
+          {% if division.dates %}
+          <p class="browse-hierarchy__dates">{{ division.dates }}</p>
+          {% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </nav>
+</div>
+{% endblock content %}

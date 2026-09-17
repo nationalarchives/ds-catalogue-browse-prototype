@@ -1,0 +1,136 @@
+@use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+
+.browse-hierarchy {
+  &__list {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  &__item,
+  &__child {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  &__item {
+    &--current {
+      margin-top: 0.5rem;
+    }
+  }
+
+  &__marker {
+    flex-shrink: 0;
+
+    width: 25px;
+    height: 25px;
+
+    background-image: url("/public/images/chevron.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+
+    &--current {
+      background-image: url("/public/images/chevron-current.svg");
+    }
+  }
+
+  &__body {
+    flex: 1 1 auto;
+
+    min-width: 0;
+  }
+
+  &__content {
+    flex: 1 1 auto;
+
+    min-width: 0;
+  }
+
+  &__item--current &__body {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    padding: 1rem 1.25rem;
+
+    background-color: colour.brand-colour("light-grey");
+
+    border-radius: 5px;
+  }
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: space-between;
+  }
+
+  &__title {
+    margin: 0;
+
+    flex: 1 1 auto;
+  }
+
+  &__header &__level {
+    margin-top: 0;
+  }
+
+  &__level {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  &__count {
+    margin-top: 0.25rem;
+
+    color: var(--font-light, rgba(1, 1, 1, 0.58));
+
+    font-size: 1rem;
+  }
+
+  &__details {
+    display: inline-block;
+
+    margin-top: 0.25rem;
+  }
+
+  &__children {
+    margin: 1rem 0 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  &__child {
+    padding: 0.75rem 0;
+
+    border-top: 1px solid var(--keyline);
+
+    &:last-child {
+      border-bottom: 1px solid var(--keyline);
+    }
+  }
+
+  &__child-link {
+    flex: 1 1 auto;
+  }
+
+  &__level-label {
+    color: var(--font-light, rgba(1, 1, 1, 0.58));
+
+    font-size: 1rem;
+  }
+
+  &__dates {
+    margin-top: 0.25rem;
+
+    color: var(--font-light, rgba(1, 1, 1, 0.58));
+
+    font-size: 1rem;
+  }
+}

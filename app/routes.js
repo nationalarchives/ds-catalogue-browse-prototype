@@ -6,7 +6,11 @@
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
-const { fetchBrowseData } = require('./lib/rosetta')
+const {
+  fetchBrowseData,
+  fetchLevelCount,
+  fetchDivisions
+} = require('./lib/rosetta')
 
 router.get('/', async function (req, res) {
   let subjects = []
@@ -59,7 +63,7 @@ router.get('/', async function (req, res) {
     return {
       name: department.name,
       code: department.code,
-      href: '#',
+      href: '/department/' + encodeURIComponent(department.code),
       subjects: department.subjects,
       hidden: selected.length > 0 && !matches
     }
@@ -73,5 +77,41 @@ router.get('/', async function (req, res) {
     filters: filters,
     departmentItems: departmentItems,
     resultCount: resultCount
+  })
+})
+
+router.get('/department', function (req, res) {
+  res.redirect('/')
+})
+
+router.get('/department/:code', async function (req, res) {
+  const code = req.params.code
+  let departmentCount = 0
+  let department = null
+  let seriesCount = 0
+  let divisions = []
+
+  try {
+    const results = await Promise.all([
+      fetchBrowseData(),
+      fetchLevelCount(code, 'Series'),
+      fetchDivisions(code)
+    ])
+    const departments = results[0].departments
+    departmentCount = departments.length
+    department = departments.find(function (d) { return d.code === code }) || null
+    seriesCount = results[1]
+    divisions = results[2]
+  } catch (error) {
+    console.error('Failed to load department data from the search API:', error.message)
+  }
+
+  divisions.sort(function (a, b) { return a.name.localeCompare(b.name) })
+
+  res.render('department', {
+    departmentCount: departmentCount,
+    department: department,
+    seriesCount: seriesCount,
+    divisions: divisions
   })
 })
