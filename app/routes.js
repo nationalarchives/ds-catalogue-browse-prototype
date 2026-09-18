@@ -6,7 +6,7 @@
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
-const { fetchBrowseData } = require('./lib/rosetta')
+const { fetchBrowseData, fetchBrowsePage, departmentHref } = require('./lib/rosetta')
 
 router.get('/', async function (req, res) {
   let subjects = []
@@ -59,7 +59,7 @@ router.get('/', async function (req, res) {
     return {
       name: department.name,
       code: department.code,
-      href: '#',
+      href: departmentHref(department),
       subjects: department.subjects,
       hidden: selected.length > 0 && !matches
     }
@@ -74,4 +74,44 @@ router.get('/', async function (req, res) {
     departmentItems: departmentItems,
     resultCount: resultCount
   })
+})
+
+router.get('/department', function (req, res) {
+  res.redirect('/')
+})
+
+router.get(/^\/department\/(.+)$/, async function (req, res) {
+  const ids = req.params[0].split('/').filter(function (segment) {
+    return segment && segment !== 'details'
+  })
+  let page = null
+
+  try {
+    page = await fetchBrowsePage(ids)
+  } catch (error) {
+    console.error('Failed to load browse path ' + ids.join('/') + ' from the search API:', error.message)
+  }
+
+  if (!page) {
+    res.status(404)
+    return res.render('department', {
+      pageTitle: 'Record not found',
+      tree: [{
+        name: 'The National Archives',
+        href: '/',
+        countLabel: '',
+        children: [{
+          name: 'Record not found',
+          href: '/department/' + ids.map(encodeURIComponent).join('/'),
+          detailsHref: '',
+          countLabel: '',
+          type: 'Department',
+          selected: true,
+          children: []
+        }]
+      }]
+    })
+  }
+
+  res.render('department', page)
 })

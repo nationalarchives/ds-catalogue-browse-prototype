@@ -1,0 +1,69 @@
+@use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/variables/typography" as typographyVars;
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/media";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/typography";
+
+.catalogue-columns {
+  margin-bottom: 50px;
+}
+
+.catalogue-main {
+  @include media.on-larger-than-mobile {
+    padding-right: 2rem;
+  }
+}
+
+.catalogue-aside {
+  align-self: flex-start;
+
+  @include media.on-larger-than-mobile {
+    position: sticky;
+    top: 20px;
+  }
+
+  &__content {
+    padding: 1.5rem;
+    background-color: colour.brand-colour("pastel-green");
+
+    border: 1px solid colour.brand-colour("light-grey");
+    border-radius: 5px;
+  }
+
+  .tna-heading-s {
+    margin-top: 20px;
+    padding-top: 0;
+  }
+
+  &__heading {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+
+    font-size: 1.375rem;
+
+    &:is(img) {
+      width: auto;
+      height: 23px;
+    }
+  }
+}
+
+.archive-hierarchy {
+  @include typography.font-size(typographyVars.$body-font-size-px * 0.85);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  ul {
+    margin: 1rem 0 0;
+    padding-left: 1.25rem;
+
+    list-style: none;
+
+    border-left: 2px dashed #999;
+  }
+}

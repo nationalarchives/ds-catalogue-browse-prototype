@@ -1,0 +1,72 @@
+{%- set containerClasses = [params.classes] if params.classes else [] -%}
+{%- set classes = containerClasses | join(' ') -%}
+<aside class="catalogue-aside tna-column{% if classes %} {{ classes }}{% endif %}">
+  <div class="catalogue-aside__content">
+    <h2 class="tna-heading-m catalogue-aside__heading">
+      <i class="fa-solid fa-circle-info catalogue-aside__icon" aria-hidden="true"></i>
+      Understanding the catalogue
+    </h2>
+    <p>Records held at The National Archives are organised by the government department which created them.</p>
+
+    <h3 class="tna-heading-s catalogue-aside__heading">
+      <i class="fa-solid fa-signs-post catalogue-aside__icon" aria-hidden="true"></i>
+      Navigating the records
+    </h3>
+    <p>Select a level to see the records within it. The actively selected level is highlighted in green.</p>
+
+    <h3 class="tna-heading-s catalogue-aside__heading">
+      <i class="fa-solid fa-bars catalogue-aside__icon" aria-hidden="true"></i>
+      Catalogue hierarchy
+    </h3>
+    <p>There can be up to seven levels in the hierarchy.</p>
+
+    <ul class="archive-hierarchy">
+      <li>
+        <strong>Department:</strong>
+        The government department of origin.
+
+        <ul>
+          <li>
+            <strong>Division:</strong>
+            Records of a particular section of a department.
+
+            <ul>
+              <li>
+                <strong>Series:</strong>
+                Records that were created or used together.
+
+                <ul>
+                  <li>
+                    <strong>Sub-series:</strong>
+                    Group of related pieces with a common function or subject within a series.
+
+                    <ul>
+                      <li>
+                        <strong>Sub sub-series:</strong>
+                        Group of related pieces with a common function or subject within a sub-series.
+
+                        <ul>
+                          <li>
+                            <strong>Piece:</strong>
+                            Units within a series, such as a file or volume.
+
+                            <ul>
+                              <li>
+                                <strong>Item:</strong>
+                                Sub-divisions of a piece, for example a letter in a file or a photograph in an album.
+                              </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</aside>

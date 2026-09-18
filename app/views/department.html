@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+
+{% set pageTitle = pageTitle or 'Browse department records' %}
+{% set theme = 'light' %}
+{% set themeAccent = 'green' %}
+
+{% from "components/development-notice/macro.njk" import developmentNotice %}
+{% from "components/browse-hierarchy/macro.njk" import browseHierarchy %}
+{% from "components/catalogue-aside/macro.njk" import catalogueAside %}
+
+{% block content %}
+<div class="tna-container">
+  <div class="tna-column tna-column--full">
+    <h1 class="tna-heading-xl tna-!--margin-top-l">Browse department records</h1>
+    <p class="tna-column--width-5-6">Records of The National Archives, organised by government department.</p>
+  </div>
+</div>
+
+<div class="tna-section">
+  <div class="tna-container">
+    <div class="tna-column tna-column--full">
+      {{ developmentNotice() }}
+    </div>
+  </div>
+</div>
+
+<div class="catalogue-columns tna-container">
+  <main class="catalogue-main tna-column tna-column--width-3-4 tna-column--width-2-3-medium tna-column--full-small tna-column--full-tiny tna-section">
+    {{ browseHierarchy({ items: tree }) }}
+  </main>
+
+  {{ catalogueAside({
+    classes: "tna-column--width-1-4 tna-column--width-1-3-medium tna-column--full-small tna-column--full-tiny tna-section"
+  }) }}
+</div>
+{% endblock content %}

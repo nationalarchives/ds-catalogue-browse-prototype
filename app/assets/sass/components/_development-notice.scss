@@ -1,20 +1,11 @@
-@use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/borders";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/colour";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/spacing";
 
 .development-notice {
+  padding: spacing.space(1);
 
-  &:first-child {
-    margin-top: 0;
-  }
-
-  padding: 1rem 1.25rem;
-  border: 3px solid colour.brand-colour("blue");
-  border-radius: 5px;
-
-  &__heading {
-    text-decoration: underline;
-  }
-
-  &__content {
-    margin-top: 0.5rem;
-  }
+  @include colour.blue-accent;
+  @include colour.thick-keyline-accent;
+  @include borders.rounded-border;
 }

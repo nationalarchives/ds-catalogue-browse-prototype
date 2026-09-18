@@ -1,0 +1,79 @@
+{% macro browseHierarchyList(items, nested, isChildren) %}
+{%- set tag = 'ul' if isChildren else 'ol' -%}
+<{{ tag }} class="browse-hierarchy__list{% if nested %} browse-hierarchy__list--nested{% endif %}">
+  {% for item in items %}
+    {{ browseHierarchyItem(item, isChildren) }}
+  {% endfor %}
+</{{ tag }}>
+{% endmacro %}
+
+{% macro browseHierarchyItem(item, isChild) %}
+{% if isChild %}
+<li class="browse-hierarchy__child">
+  <div class="browse-hierarchy__row">
+    <span class="browse-hierarchy__marker" aria-hidden="true"></span>
+    <div class="browse-hierarchy__body">
+      <div class="browse-hierarchy__header">
+        <a href="{{ item.href }}" class="browse-hierarchy__child-link">{{ item.name }}</a>
+        {% if item.type %}
+        <span class="browse-hierarchy__level-label">{{ item.type }}</span>
+        {% endif %}
+      </div>
+      {% if item.dates %}
+      <p class="browse-hierarchy__dates">{{ item.dates }}</p>
+      {% endif %}
+    </div>
+  </div>
+</li>
+{% elif item.selected %}
+<li class="browse-hierarchy__item browse-hierarchy__item--current" aria-current="true">
+  <div class="browse-hierarchy__row browse-hierarchy__row--current">
+    <span class="browse-hierarchy__marker browse-hierarchy__marker--current" aria-hidden="true"></span>
+    <div class="browse-hierarchy__content">
+      <div class="browse-hierarchy__header">
+        <h2 class="tna-heading-s browse-hierarchy__title">{{ item.name }}</h2>
+        {% if item.type or item.code %}
+        <p class="browse-hierarchy__level">
+          {% if item.type %}<span class="browse-hierarchy__level-label">{{ item.type }}</span>{% endif %}
+          {% if item.code %}<span class="tna-chip tna-chip--green browse-hierarchy__code">{{ item.code }}</span>{% endif %}
+        </p>
+        {% endif %}
+      </div>
+      {% if item.dates %}
+      <p class="browse-hierarchy__dates">{{ item.dates }}</p>
+      {% endif %}
+      {% if item.countLabel %}
+      <p class="browse-hierarchy__count">{{ item.countLabel }}</p>
+      {% endif %}
+      {% if item.detailsHref %}
+      <a href="{{ item.detailsHref }}" class="browse-hierarchy__details">View details</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if item.children and item.children.length %}
+    {{ browseHierarchyList(item.children, true, true) }}
+  {% endif %}
+</li>
+{% else %}
+<li class="browse-hierarchy__item">
+  <div class="browse-hierarchy__row">
+    <span class="browse-hierarchy__marker" aria-hidden="true"></span>
+    <div class="browse-hierarchy__body">
+      <a href="{{ item.href }}" class="browse-hierarchy__link">{{ item.name }}</a>
+      {% if item.countLabel %}
+      <p class="browse-hierarchy__count">{{ item.countLabel }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if item.children and item.children.length %}
+    {{ browseHierarchyList(item.children, true, false) }}
+  {% endif %}
+</li>
+{% endif %}
+{% endmacro %}
+
+<nav class="browse-hierarchy" aria-label="{{ params.label or 'Catalogue hierarchy' }}">
+  {{ browseHierarchyList(params.items or [], false, false) }}
+</nav>
