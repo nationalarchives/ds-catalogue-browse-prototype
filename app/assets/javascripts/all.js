@@ -1,5 +1,6 @@
 import { BrowseFilters } from "./components/browse-filters/browse-filters.js";
 import { DepartmentList } from "./components/department-list/department-list.js";
+import { Accordion } from "./components/etna-accordion/etna-accordion.js";
 
 const initAll = (options = {}) => {
   const $scope =
@@ -12,6 +13,10 @@ const initAll = (options = {}) => {
   $scope
     .querySelectorAll('[data-module="department-list"]')
     .forEach(($module) => new DepartmentList($module));
+
+  $scope
+    .querySelectorAll('[data-module="etna-accordion"]')
+    .forEach(($module) => new Accordion($module));
 };
 
 initAll();

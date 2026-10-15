@@ -81,8 +81,10 @@ router.get('/department', function (req, res) {
 })
 
 router.get(/^\/department\/(.+)$/, async function (req, res) {
-  const ids = req.params[0].split('/').filter(function (segment) {
-    return segment && segment !== 'details'
+  const segments = req.params[0].split('/').filter(Boolean)
+  const isDetails = segments[segments.length - 1] === 'details'
+  const ids = segments.filter(function (segment) {
+    return segment !== 'details'
   })
   let page = null
 
@@ -113,5 +115,5 @@ router.get(/^\/department\/(.+)$/, async function (req, res) {
     })
   }
 
-  res.render('department', page)
+  res.render(isDetails ? 'record' : 'department', page)
 })

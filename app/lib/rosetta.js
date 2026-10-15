@@ -1,6 +1,8 @@
 const SEARCH_API_URL = process.env.ROSETTA_API_URL
   || 'https://rosetta-staging.k-int.com/rosetta/data/search'
 
+const RECORD_API_URL = SEARCH_API_URL.replace(/\/search$/, '/get')
+
 const DEPARTMENTS_QUERY = 'size=1000&aggs=longSubject&filter=level:Lettercode;group:tna'
 
 const HIERARCHY_LEVELS = [
@@ -60,7 +62,92 @@ function parseRecord (record) {
     dates: formatDates(details.dateCovering),
     level: level || '',
     type: displayType(level),
+    description: details.cleanDescription || details.description || '',
+    heldBy: details.heldBy || '',
+    digitised: details.digitised || false,
     subjects: toArray(details.subjects)
+  }
+}
+
+function escapeHtml (value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function strong (value) {
+  return '<strong>' + escapeHtml(value) + '</strong>'
+}
+
+function buildWhatsItAbout (record, seriesName) {
+  let sentence = 'This record is about ' + strong(record.name || 'this record')
+  if (record.dates) {
+    sentence += ' dating from ' + strong(record.dates)
+  }
+  if (seriesName) {
+    sentence += ' in the series ' + strong(seriesName)
+  }
+  sentence += '.'
+  if (record.heldBy) {
+    sentence += ' It is held at ' + strong(record.heldBy) + '.'
+  }
+  return sentence
+}
+
+function buildAvailableOnline (record) {
+  if (record.digitised) {
+    return 'Yes, this record is available to view online. <a href="#">View online.</a>'
+  }
+  return 'No, this record is not available online. However, you can order a copy. <a href="#">How to view it.</a>'
+}
+
+function buildInPerson (record) {
+  const place = record.heldBy || 'The National Archives'
+  return 'Yes, this record is held at ' + escapeHtml(place) +
+    ' and is available to see in person. <a href="#">Other ways to view it.</a>'
+}
+
+function recordUrl (id) {
+  if (!id) {
+    return ''
+  }
+  return 'https://beta.nationalarchives.gov.uk/catalogue/id/' + id + '/'
+}
+
+function cleanArrangement (value) {
+  if (!value) {
+    return ''
+  }
+  return String(value)
+    .replace(/<head>[\s\S]*?<\/head>/gi, '')
+    .replace(/<(?!\/?p\b)[^>]+>/gi, '')
+    .trim()
+}
+
+function buildRecord (record, context) {
+  const ctx = context || {}
+  const details = ctx.details || {}
+  return {
+    title: record.name,
+    type: record.type,
+    level: record.level,
+    orderable: record.level === 'Piece' || record.level === 'Item',
+    reference: record.code || '',
+    date: record.dates || '',
+    description: record.description || '',
+    arrangement: cleanArrangement(details.arrangement),
+    heldBy: record.heldBy || '',
+    subjects: record.subjects || [],
+    legalStatus: details.legalStatus || '',
+    closureStatus: details.closureStatus || '',
+    recordUrl: recordUrl(record.id),
+    recordsHref: ctx.recordsHref || '',
+    seriesInfo: ctx.seriesInfo || null,
+    whatsItAbout: buildWhatsItAbout(record, ctx.seriesName),
+    availableOnline: buildAvailableOnline(record),
+    inPerson: buildInPerson(record)
   }
 }
 
@@ -70,6 +157,16 @@ async function fetchSearch (query) {
     throw new Error('Search API responded with ' + response.status)
   }
   return response.json()
+}
+
+async function fetchRecord (id) {
+  const response = await fetch(RECORD_API_URL + '?id=' + encodeURIComponent(id))
+  if (!response.ok) {
+    throw new Error('Record API responded with ' + response.status)
+  }
+  const json = await response.json()
+  const data = json.data || []
+  return data.length ? data[0]['@template'].details : null
 }
 
 function hierarchyQuery (id, level, size) {
@@ -169,6 +266,7 @@ async function fetchBrowsePage (ids) {
   const trailIds = []
   const trail = [toTreeItem(department, departmentHref(department))]
   let current = department
+  let selectedSiblings = browse.departments
 
   for (let i = 1; i < ids.length; i++) {
     const siblings = await fetchNextChildren(current.id, current.level)
@@ -178,6 +276,7 @@ async function fetchBrowsePage (ids) {
     if (!next) {
       return null
     }
+    selectedSiblings = siblings
     trailIds.push(next.id)
     trail.push(toTreeItem(next, departmentHref(department, trailIds)))
     current = next
@@ -186,11 +285,45 @@ async function fetchBrowsePage (ids) {
   const selected = trail[trail.length - 1]
   selected.selected = true
 
-  const [children, seriesCount] = await Promise.all([
+  const seriesItem = trail.find(function (item) {
+    return item.level === 'Series'
+  })
+  const seriesName = seriesItem ? seriesItem.name : ''
+  const seriesInfo = seriesItem ? {
+    reference: seriesItem.code,
+    title: seriesItem.name,
+    href: seriesItem.detailsHref,
+    isSelf: seriesItem.id === current.id
+  } : null
+
+  if (trailIds.length) {
+    const index = selectedSiblings.findIndex(function (item) {
+      return item.id === current.id
+    })
+    const parentIds = trailIds.slice(0, -1)
+    const siblingRecord = function (sibling) {
+      return {
+        name: sibling.name,
+        code: sibling.code,
+        href: departmentHref(department, parentIds.concat(sibling.id)) + '/details'
+      }
+    }
+    const previousSibling = index > 0 ? selectedSiblings[index - 1] : null
+    const nextSibling = index !== -1 ? selectedSiblings[index + 1] : null
+    if (previousSibling) {
+      selected.previousRecord = siblingRecord(previousSibling)
+    }
+    if (nextSibling) {
+      selected.nextRecord = siblingRecord(nextSibling)
+    }
+  }
+
+  const [children, seriesCount, details] = await Promise.all([
     fetchNextChildren(selected.id, selected.level),
     selected.level === 'Lettercode' || selected.level === 'Division'
       ? fetchTotal(selected.id, 'Series')
-      : Promise.resolve(0)
+      : Promise.resolve(0),
+    fetchRecord(current.id).catch(function () { return null })
   ])
 
   selected.countLabel = seriesLabel(seriesCount)
@@ -204,7 +337,13 @@ async function fetchBrowsePage (ids) {
       name: 'The National Archives',
       href: '/',
       countLabel: browse.departments.length + ' departments'
-    }, trail)
+    }, trail),
+    record: buildRecord(current, {
+      seriesName: seriesName,
+      seriesInfo: seriesInfo,
+      recordsHref: selected.href,
+      details: details
+    })
   }
 }
 
