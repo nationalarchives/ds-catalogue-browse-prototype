@@ -1,0 +1,182 @@
+{%- set record = params.record or {} -%}
+
+<div class="record-details">
+  <div class="record-details__summary">
+    <section class="tna-aside tna-aside--tight tna-background-accent-light record-details__panel">
+      <h2 class="{{ 'tna-heading-s' if record.orderable else 'tna-heading-l' }} record-details__panel-heading">What’s it about?</h2>
+      {% if record.orderable %}
+      <p>{{ record.whatsItAbout | safe }}</p>
+      {% else %}
+      <div class="record-details__about">
+        <div class="square tna-background-contrast record-details__about-ref">
+          <p class="tna-heading-m">{{ record.reference }}</p>
+        </div>
+        <div class="record-details__about-body">
+          <p>{{ record.description }}</p>
+          {% if record.recordsHref %}
+          <a href="{{ record.recordsHref }}" class="record-details__about-link">View all records in this {{ record.level | lower }}</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </section>
+
+    {% if record.orderable %}
+    <section class="tna-aside tna-aside--tight tna-background-accent-light record-details__panel">
+      <h2 class="tna-heading-s record-details__panel-heading">Is it available online?</h2>
+      <p>{{ record.availableOnline | safe }}</p>
+    </section>
+
+    <section class="tna-aside tna-aside--tight tna-background-accent-light record-details__panel">
+      <h2 class="tna-heading-s record-details__panel-heading">Can I see it in person?</h2>
+      <p>{{ record.inPerson | safe }}</p>
+    </section>
+    {% endif %}
+  </div>
+
+  <h2 class="tna-heading-l record-details__heading">Full description and record details</h2>
+
+  <dl class="record-details__list">
+    {% if record.reference %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Reference</span>
+        <span class="record-details__hint">A unique code used to identify and order the record</span>
+      </dt>
+      <dd class="record-details__value">{{ record.reference }}</dd>
+    </div>
+    {% endif %}
+
+    {% if not record.orderable and record.title %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Title</span>
+        <span class="record-details__hint">The name of the record</span>
+      </dt>
+      <dd class="record-details__value">{{ record.title }}</dd>
+    </div>
+    {% endif %}
+
+    {% if record.date %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Date</span>
+        <span class="record-details__hint">When the record was created</span>
+      </dt>
+      <dd class="record-details__value">{{ record.date }}</dd>
+    </div>
+    {% endif %}
+
+    {% if record.description %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Description</span>
+        <span class="record-details__hint">What the record is about</span>
+      </dt>
+      <dd class="record-details__value">{{ record.description }}</dd>
+    </div>
+    {% endif %}
+
+    {% if not record.orderable and record.arrangement %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Arrangement</span>
+        <span class="record-details__hint">Information about the filing sequence or logical order of the record</span>
+      </dt>
+      <dd class="record-details__value">{{ record.arrangement | safe }}</dd>
+    </div>
+    {% endif %}
+
+    {% if record.heldBy %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Held by</span>
+        <span class="record-details__hint">Who holds the record</span>
+      </dt>
+      <dd class="record-details__value">{{ record.heldBy }}</dd>
+    </div>
+    {% endif %}
+
+    {% if record.legalStatus %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Legal status</span>
+        <span class="record-details__hint">A note as to whether the record being described is a Public Record or not</span>
+      </dt>
+      <dd class="record-details__value">{{ record.legalStatus }}</dd>
+    </div>
+    {% endif %}
+
+    {% if record.subjects and record.subjects.length %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Subjects</span>
+        <span class="record-details__hint">Categories and themes found in our collection (our subject list is under development, and some records may have no subjects or fewer than expected)</span>
+      </dt>
+      <dd class="record-details__value">
+        <ul class="tna-chip-list record-details__subjects">
+          {% for subject in record.subjects %}
+          <li class="tna-chip-list__item"><span class="tna-chip tna-chip--green">{{ subject }}</span></li>
+          {% endfor %}
+        </ul>
+      </dd>
+    </div>
+    {% endif %}
+
+    {% if record.closureStatus %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Closure status</span>
+        <span class="record-details__hint">Whether the record is ‘open’ (available to the public) or ‘closed’ (not available due to a legal exemption)</span>
+      </dt>
+      <dd class="record-details__value">{{ record.closureStatus }}</dd>
+    </div>
+    {% endif %}
+
+    {% if record.recordUrl %}
+    <div class="record-details__row">
+      <dt class="record-details__term">
+        <span class="record-details__label">Record url</span>
+      </dt>
+      <dd class="record-details__value">{{ record.recordUrl }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+
+  {% set showSeriesInfo = record.seriesInfo and not record.seriesInfo.isSelf %}
+  {% if record.orderable or showSeriesInfo %}
+  <div class="etna-accordion" data-multiselectable="true" data-module="etna-accordion">
+    {% if record.orderable %}
+    <div class="etna-accordion__item" data-isopen="false">
+      <h3 class="etna-accordion__heading">How to order it</h3>
+      <div class="etna-accordion__body">
+        <ol class="record-details__order-steps">
+          <li>View this record page in our current catalogue</li>
+          <li>Check viewing and downloading options</li>
+          <li>Select an option and follow instructions</li>
+        </ol>
+        <a href="{{ record.recordUrl }}" class="tna-button">View this record page</a>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if showSeriesInfo %}
+    <div class="etna-accordion__item" data-isopen="false">
+      <h3 class="etna-accordion__heading">Series information</h3>
+      <div class="etna-accordion__body">
+        <div class="record-details__series-info">
+          <div class="square tna-background-accent record-details__series-ref">
+            <p class="tna-heading-m">{{ record.seriesInfo.reference }}</p>
+          </div>
+          <div class="record-details__series-body">
+            <h3 class="tna-heading-s record-details__series-title">{{ record.seriesInfo.title }}</h3>
+            <p>See the series level description for more information about this record.</p>
+            <a href="{{ record.seriesInfo.href }}">View series description</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>

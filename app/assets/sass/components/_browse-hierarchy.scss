@@ -1,4 +1,5 @@
 @use "node_modules/@nationalarchives/frontend/nationalarchives/variables/colour";
+@use "node_modules/@nationalarchives/frontend/nationalarchives/tools/typography";
 
 .browse-hierarchy {
   &__list {
@@ -10,7 +11,7 @@
 
   &__list--nested {
     margin-top: 0.75rem;
-    padding-left: 1.25rem;
+    padding-left: 0.75rem;
 
     border-left: 2px dashed colour.brand-colour("grey");
   }
@@ -116,7 +117,8 @@
 
     color: var(--font-light, rgba(1, 1, 1, 0.58));
 
-    font-size: 1rem;
+    @include typography.detail-font;
+    @include typography.font-size(14);
   }
 
   &__dates {
@@ -124,6 +126,43 @@
 
     color: var(--font-light, rgba(1, 1, 1, 0.58));
 
+    font-size: 1rem;
+  }
+
+  &__this-record {
+    margin-bottom: 0.5rem;
+
+    color: var(--font-light, rgba(1, 1, 1, 0.58));
+
+    @include typography.detail-font;
+    @include typography.font-size(14);
+  }
+
+  &__ref {
+    margin-top: 0.25rem;
+
+    @include typography.detail-font;
+    font-size: 1rem;
+  }
+
+  &__adjacent {
+    margin-top: 1rem;
+
+    text-align: right;
+  }
+
+  &__adjacent-name {
+    margin-top: 0.5rem;
+
+    color: var(--font-light, rgba(1, 1, 1, 0.58));
+  }
+
+  &__adjacent-ref {
+    margin-top: 0.25rem;
+
+    color: var(--font-light, rgba(1, 1, 1, 0.58));
+
+    @include typography.detail-font;
     font-size: 1rem;
   }
 }

@@ -1,13 +1,13 @@
-{% macro browseHierarchyList(items, nested, isChildren) %}
+{% macro browseHierarchyList(items, nested, isChildren, detail) %}
 {%- set tag = 'ul' if isChildren else 'ol' -%}
 <{{ tag }} class="browse-hierarchy__list{% if nested %} browse-hierarchy__list--nested{% endif %}">
   {% for item in items %}
-    {{ browseHierarchyItem(item, isChildren) }}
+    {{ browseHierarchyItem(item, isChildren, detail) }}
   {% endfor %}
 </{{ tag }}>
 {% endmacro %}
 
-{% macro browseHierarchyItem(item, isChild) %}
+{% macro browseHierarchyItem(item, isChild, detail) %}
 {% if isChild %}
 <li class="browse-hierarchy__child">
   <div class="browse-hierarchy__row">
@@ -24,6 +24,40 @@
       {% endif %}
     </div>
   </div>
+</li>
+{% elif item.selected and detail %}
+<li class="browse-hierarchy__item browse-hierarchy__item--current" aria-current="true">
+  <div class="browse-hierarchy__row browse-hierarchy__row--current browse-hierarchy__row--record">
+    <div class="browse-hierarchy__content">
+      <p class="browse-hierarchy__this-record">This record:</p>
+      <div class="browse-hierarchy__header">
+        <h2 class="tna-heading-s browse-hierarchy__title">{{ item.name }}</h2>
+        {% if item.type %}<span class="browse-hierarchy__level-label">{{ item.type }}</span>{% endif %}
+      </div>
+      {% if item.dates %}
+      <p class="browse-hierarchy__dates">{{ item.dates }}</p>
+      {% endif %}
+      {% if item.code %}
+      <p class="browse-hierarchy__ref">{{ item.code }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if item.previousRecord %}
+  <div class="browse-hierarchy__adjacent browse-hierarchy__adjacent--previous">
+    <a href="{{ item.previousRecord.href }}" class="browse-hierarchy__adjacent-link">&lt; Previous record</a>
+    {% if item.previousRecord.name %}<p class="browse-hierarchy__adjacent-name">{{ item.previousRecord.name }}</p>{% endif %}
+    {% if item.previousRecord.code %}<p class="browse-hierarchy__adjacent-ref">{{ item.previousRecord.code }}</p>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if item.nextRecord %}
+  <div class="browse-hierarchy__adjacent browse-hierarchy__adjacent--next">
+    <a href="{{ item.nextRecord.href }}" class="browse-hierarchy__adjacent-link">Next record &gt;</a>
+    {% if item.nextRecord.name %}<p class="browse-hierarchy__adjacent-name">{{ item.nextRecord.name }}</p>{% endif %}
+    {% if item.nextRecord.code %}<p class="browse-hierarchy__adjacent-ref">{{ item.nextRecord.code }}</p>{% endif %}
+  </div>
+  {% endif %}
 </li>
 {% elif item.selected %}
 <li class="browse-hierarchy__item browse-hierarchy__item--current" aria-current="true">
@@ -45,14 +79,14 @@
       {% if item.countLabel %}
       <p class="browse-hierarchy__count">{{ item.countLabel }}</p>
       {% endif %}
-      {% if item.detailsHref %}
+      {% if item.detailsHref and not detail %}
       <a href="{{ item.detailsHref }}" class="browse-hierarchy__details">View details</a>
       {% endif %}
     </div>
   </div>
 
   {% if item.children and item.children.length %}
-    {{ browseHierarchyList(item.children, true, true) }}
+    {{ browseHierarchyList(item.children, true, true, detail) }}
   {% endif %}
 </li>
 {% else %}
@@ -68,12 +102,12 @@
   </div>
 
   {% if item.children and item.children.length %}
-    {{ browseHierarchyList(item.children, true, false) }}
+    {{ browseHierarchyList(item.children, true, false, detail) }}
   {% endif %}
 </li>
 {% endif %}
 {% endmacro %}
 
 <nav class="browse-hierarchy" aria-label="{{ params.label or 'Catalogue hierarchy' }}">
-  {{ browseHierarchyList(params.items or [], false, false) }}
+  {{ browseHierarchyList(params.items or [], false, false, params.detail) }}
 </nav>
