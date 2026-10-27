@@ -8,6 +8,8 @@ const router = govukPrototypeKit.requests.setupRouter()
 
 const { fetchBrowseData, fetchBrowsePage, departmentHref } = require('./lib/rosetta')
 
+const MAX_PATH_SEGMENTS = 10
+
 router.get('/', async function (req, res) {
   let subjects = []
   let departments = []
@@ -81,11 +83,9 @@ router.get('/department', function (req, res) {
 })
 
 router.get(/^\/department\/(.+)$/, async function (req, res) {
-  const segments = req.params[0].split('/').filter(Boolean)
+  const segments = req.params[0].split('/', MAX_PATH_SEGMENTS).filter(Boolean)
   const isDetails = segments[segments.length - 1] === 'details'
-  const ids = segments.filter(function (segment) {
-    return segment !== 'details'
-  })
+  const ids = isDetails ? segments.slice(0, -1) : segments
   let page = null
 
   try {
@@ -115,5 +115,9 @@ router.get(/^\/department\/(.+)$/, async function (req, res) {
     })
   }
 
-  res.render(isDetails ? 'record' : 'department', page)
+  if (isDetails) {
+    return res.render('record', page)
+  }
+
+  res.render('department', page)
 })
